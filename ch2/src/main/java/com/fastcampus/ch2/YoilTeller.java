@@ -22,7 +22,7 @@ public class YoilTeller {
         String month = request.getParameter("month");
         String day = request.getParameter("day");
 
-        int yyyy = Integer.parseInt(year);
+         int yyyy = Integer.parseInt(year);
         int mm = Integer.parseInt(month);
         int dd = Integer.parseInt(day);
 

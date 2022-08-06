@@ -24,7 +24,7 @@ public class YoilTellerMVC {
        model.addAttribute("day",day);
        model.addAttribute("yoil",yoil);
        
-       
+        
        
         return "yoil";// jsp 파일  WEB-INF/views/yoil.jsp
         

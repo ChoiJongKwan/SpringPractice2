@@ -3,51 +3,43 @@ package com.fastcampus.ch2;
 import java.util.Calendar;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class YoilTellerMVC5 {
-	@ExceptionHandler(Exception.class)
-	public String catCher(Exception ex) {
+    @ExceptionHandler(Exception.class)
+	public String catcher(Exception ex) {
+		System.out.println("ex="+ex);
+		
 		return "yoilError";
 	}
-	
-	
-    @RequestMapping("/getYoilMVC5") // http://localhost/ch2/getYoilMVC4?year=2021&month=10&day=1
-    public ModelAndView main(MyDate date) { // 반환 타입이 ModelAndView 
-System.out.println("date="+date);
+    
+    @RequestMapping("/getYoilMVC5") // http://localhost/ch2/getYoilMVC5?year=2021&month=10&day=1
+//  public String main(@ModelAttribute("myDate") MyDate date, Model m) { // 아래와 동일 
+    public String main(@ModelAttribute MyDate date, Model m) { // @ModelAttribute사용, 반환 타입은 String  
+System.out.println("myDate="+date);
 
-    	// 1. ModelAndView를 생성
-    	ModelAndView mv = new ModelAndView(); 
+    	// 1. 유효성 검사 
+    	if(!isValid(date))
+    		return "yoilError";
     	
-    	// 2. 유효성 검사 
-    	if(!isValid(date)) {
-            mv.setViewName("yoilError"); // 뷰의 이름을 지정 
-    	    return mv;
-        }
-    	
-        // 3. 처리
+        // 2. 처리
     	char yoil = getYoil(date);
 
-    	// 4. ModelAndView에 작업한 결과를 저장 
-      	//mv.addObject("year",  date.getYear());     	
-      	//mv.addObject("month", date.getMonth());     	
-      	//mv.addObject("day",   date.getDay());
-        mv.addObject("myDate", date);
-      	mv.addObject("yoil", yoil);        
+    	// 3. Model에 작업한 결과를 저장 
+        // @ModelAttribute 덕분에 MyDate를 저장안해도 됨. View로 자동 전달됨.
+//      m.addAttribute("myDate", date);     	
+//      m.addAttribute("yoil", yoil);        
         
-      	// 5. 작업 결과를 보여줄 뷰의 이름을 지정 
-      	mv.setViewName("yoil"); 
-      	
-      	// 6. ModelAndView를 반환
-      	return mv;
+      	// 4. 작업 결과를 보여줄 뷰의 이름을 반환  
+      	return "yoil";
     }
-
-    private char getYoil(MyDate date) {
-        return getYoil(date.getYear(), date.getMonth(), date.getDay());
+    
+    private @ModelAttribute("yoil") char getYoil(MyDate date) {
+    	return getYoil(date.getYear(), date.getMonth(), date.getDay());
     }
     
     private char getYoil(int year, int month, int day) {
@@ -57,9 +49,9 @@ System.out.println("date="+date);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         return " 일월화수목금토".charAt(dayOfWeek);
     }
-    
+
     private boolean isValid(MyDate date) {
-        return isValid(date.getYear(), date.getMonth(), date.getDay());
+    	return isValid(date.getYear(), date.getMonth(), date.getDay());
     }
     
     private boolean isValid(int year, int month, int day) {    
